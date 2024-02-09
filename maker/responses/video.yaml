@@ -1,0 +1,37 @@
+---
+
+response:
+  type: object
+  properties:
+    id:
+      type: string
+    create_time:
+      type: int64
+    cover_image_url:
+      type: string
+    share_url:
+      type: string
+    video_description:
+      type: string
+    duration:
+      type: int32
+    height:
+      type: int32
+    width:
+      type: int32
+    title:
+      type: string
+    embed_html:
+      type: string
+    embed_link:
+      type: string
+    like_count:
+      type: int32
+    comment_coun:
+      type: int32
+    share_count:
+      type: int32
+    view_count:
+      type: int32
+
+    

@@ -1,0 +1,120 @@
+<%
+def make_items_type(items)
+  case items[:type]
+  when "int64" then
+    "i64"
+  when "int32" then
+    "i32"
+  when "boolean" then
+    "bool"
+  when "object" then
+    items[:ref].ucc
+  when "float" then
+    "f64"
+  else
+    "String"
+  end
+end
+
+def make_response_type(key, value)
+  res = case value[:type]
+  when "int64" then
+    "i64"
+  when "int32" then
+    "i32"
+  when "boolean" then
+    "bool"
+  when "array" then
+    "Vec<#{make_items_type(value[:items])}>"
+  when "object" then
+    if value[:ref].present?
+      value[:ref].ucc
+    else
+      @inner_map[key] = value
+      key.to_s.ucc
+    end
+  when "enum_single" then
+    @enums[key] = value[:value]
+    key.to_s.ucc
+  else
+    "String"
+  end
+  if value[:required] == true
+    res
+  else
+    "Option<#{res}>"
+  end
+end
+extra_list = []
+properties.each_pair do |key, value|
+  if value[:type] == "object"
+    if value[:required] == true
+      extra_list << "self.#{key}.is_empty_extra()"
+    else
+      extra_list << "self.#{key}.as_ref().map(|it| it.is_empty_extra()).unwrap_or(true)"
+    end
+  elsif value[:type] == "array" && value[:items][:type] == "object"
+    if value[:required] == true
+      extra_list << "self.#{key}.iter().all(|it| it.is_empty_extra())"
+    else
+      extra_list << "self.#{key}.as_ref().map(|it| it.iter().all(|item| item.is_empty_extra())).unwrap_or(true)"
+    end
+  end
+end
+extra_value = extra_list.present? ? " &&\n        #{extra_list.join(" &&\n        ")}" : ""
+
+%><% if independence_flag %><% if refs.present?  %>use crate::responses::{<%= refs.map{|it| "#{it}::#{it.ucc}"}.join(", ") %>};
+<% end %>use serde::{Serialize, Deserialize};<% end %>
+
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+pub struct <%= class_name %> {<% properties.each_pair do |key, value| %><% if !value[:required] %>
+    #[serde(skip_serializing_if = "Option::is_none")]<% end %>
+    pub <%= key.to_s.make_name %>: <%= make_response_type(key, value) %>, <% end %>
+    #[serde(flatten)]
+    pub extra: std::collections::HashMap<String, serde_json::Value>,
+}
+
+impl <%= class_name %> {
+    pub fn is_empty_extra(&self) -> bool {
+        let res = self.extra.is_empty()<%= extra_value %>;
+        if !res {
+          println!("<%= class_name %> {:?}", self.extra);
+        }
+        res
+    }
+}
+<% @enums.each_pair do |key, ary| %>
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum <%= key.to_s.ucc %> {<% ary.each do |it| %>
+    #[serde(rename = "<%= it %>")]
+    <%= it.ucc %>,<% end %>
+}
+
+impl std::fmt::Display for <%= key.to_s.ucc %> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {<% ary.each do |it| %>
+            Self::<%= it.ucc %> => write!(f, "<%= it %>"),<% end %>
+        }
+    }
+}
+
+impl Default for <%= key.to_s.ucc %> {
+    fn default() -> Self { Self::<%= ary.first.ucc %> }
+}
+<% end %>
+
+<% if independence_flag %>
+#[derive(Debug, Clone)]
+pub enum <%= class_name %>Field {<% properties.each_pair do |key, value| %>
+    <%= key.to_s.ucc %>,<% end %>
+}
+impl std::fmt::Display for <%= class_name %>Field {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {<% properties.each_pair do |key, value| %>
+            Self::<%= key.to_s.ucc %> => write!(f, "<%= key %>"),<% end %>
+        }
+    }
+}
+
+
+<% end %>

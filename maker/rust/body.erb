@@ -1,0 +1,38 @@
+<%
+def make_type_simple(src)
+  case src[:type]
+  when "int64" then
+    "i64"
+  when "int32" then
+    "i32"
+  else
+    "String"
+  end
+end
+
+def make_body_type(src)
+  res = case src[:type]
+  when "enum_single" then
+    src[:name].ucc
+  when "bool"
+    "bool"
+  when "string" then
+    "String"
+  when "object" then
+    src[:name].ucc
+  when "array" then
+    "Vec<#{src[:items][:type] == "object" ? src[:name].singularize.ucc : make_type_simple(src)}>"
+  else
+    "String"
+  end
+  if !src[:required]
+    "Option<#{res}>"
+  else
+    res
+  end
+end
+%>#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct <%= name.ucc %> {<% properties.each() do |it| %><% if !it[:required] %>
+    #[serde(skip_serializing_if = "Option::is_none")]<% end %>
+    pub <%= it[:name].make_name %>: <%= make_body_type(it) %>,<% end %>
+}

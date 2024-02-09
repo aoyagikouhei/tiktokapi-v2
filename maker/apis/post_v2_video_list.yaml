@@ -1,0 +1,36 @@
+---
+
+url: https://open.tiktokapis.com/v2/video/list/
+method: post
+queries:
+  - name: fields
+    required: true
+    type: enum
+    value: video
+body:
+  type: object
+  properties:
+    - name: cursor
+      type: int64
+    - name: max_count
+      type: int32
+      min: 10
+      max: 20
+response:
+  type: object
+  properties:
+    data:
+      type: object
+      properties:
+        videos:
+          type: array
+          items:
+            type: object
+            ref: video
+    cursor:
+      type: int64
+    has_more:
+      type: boolean
+    error:
+      type: object
+      ref: error

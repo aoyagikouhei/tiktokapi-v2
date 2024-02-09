@@ -1,0 +1,34 @@
+---
+
+url: https://open.tiktokapis.com/v2/video/query/
+method: post
+queries:
+  - name: fields
+    required: true
+    type: enum
+    value: video
+body:
+  type: object
+  properties:
+    - name: filters
+      require: true
+      type: object
+      properties:
+        - name: video_ids
+          type: array
+          items: 
+            type: string
+response:
+  type: object
+  properties:
+    data:
+      type: object
+      properties:
+        videos:
+          type: array
+          items:
+            type: object
+            ref: video
+    error:
+      type: object
+      ref: error

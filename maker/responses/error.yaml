@@ -1,0 +1,20 @@
+---
+
+response:
+  type: object
+  properties:
+    code:
+      type: enum_single
+      value:
+        - ok
+        - access_token_invalid
+        - internal_error
+        - invalid_file_upload
+        - invalid_params
+        - rate_limit_exceeded
+        - scope_not_authorized
+        - scope_permission_missed
+    message:
+      type: string
+    log_id:
+      type: string

@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "rust"
+		}
+	],
+	"settings": {
+		"rust-analyzer.cargo.features": [
+			"oauth",
+			"retry",
+		],
+		"rust-analyzer.linkedProjects": [
+			"./rust/Cargo.toml",
+		],
+		"rust-analyzer.showUnlinkedFileNotification": false
+	}
+}

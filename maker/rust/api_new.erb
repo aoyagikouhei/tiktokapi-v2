@@ -1,0 +1,60 @@
+<%
+def make_new_type(it)
+  case it[:type]
+  when "int64" then
+    "i64"
+  when "int32" then
+    "i32"
+  when "enum" then
+    "HashSet<#{it[:value].ucc}Field>"
+  when "enum_single" then
+    "#{it[:name].ucc}"
+  when "boolean" then
+    "bool"
+  else
+    "&str"
+  end
+end
+
+def required_new(it)
+  case it[:type]
+  when "string" then
+    "#{it[:name].make_name.make_field}: #{it[:name].make_field}.to_owned()"    
+  else
+    "#{it[:name].make_name.make_field}"
+  end
+end
+
+def make_open_or_all(it, open_flag)
+  value = it[:name].ucc
+  if open_flag && ["media.fields", "tweet.fields"].include?(it[:name])
+    value = value + "::open()"
+  else
+    if it[:name] == "tweet.fields"
+      value = value + "::organic()"
+    else
+      value = value + "::all()"
+    end
+  end
+  unless it[:required]
+    value = "Some(#{value})"
+  end
+  "#{it[:name].make_name.make_field}: #{value},"
+end
+
+def make_max(it)
+  value = it[:max].to_s
+  unless it[:required]
+    value = "Some(#{value})"
+  end
+  "#{it[:name].make_name.make_field}: #{value},"
+end
+
+new_array = required_queries.map{|it| "#{it[:name].make_name.make_field}: #{make_new_type(it)}"}
+new_array << "body: Body" if bodies.present?
+%>pub fn new(<%= new_array.join(", ") %>) -> Self {
+    Self {<% required_queries.each do |it| %>
+        <%= required_new(it) %>,<% end %><% if bodies.present? %>
+        body,<% end %>
+    }
+}

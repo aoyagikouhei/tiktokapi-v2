@@ -1,0 +1,36 @@
+<% if @enum_flag %>use itertools::Itertools;
+use std::collections::HashSet;
+<% end %><% if responses_refs.present? %>use crate::responses::{<%= responses_refs.map{|it| "#{it}::#{it.ucc}"}.join(", ") %>};
+<% end %><% if @fields.present? %>use crate::responses::{<%= @fields.map{|it| "#{it}::#{it.ucc}Field"}.join(", ") %>};
+<% end %>use reqwest::RequestBuilder;
+use serde::{Serialize, Deserialize};
+use crate::{
+    apis::execute_api,
+    error::Error as ApiError,
+};
+
+const URL: &str = "<%= yml[:url] %>";
+
+<% if bodies.present? %><%= bodies.join("\n\n") %><% end %>
+
+<%= api_struct %>
+
+impl Api {
+<%= api_new %>
+<%= setter %>
+    pub fn build(self, bearer_code: &str) -> RequestBuilder {
+<%= parameters %>
+        let client = reqwest::Client::new();
+        client
+            .<%= yml[:method] %>(URL)<% if queries.present? %>
+            .query(&query_parameters)<% end %><% if bodies.present? %>
+            .json(&self.body)<% end %>
+            .bearer_auth(bearer_code)
+    }
+
+    pub async fn execute(self, bearer_code: &str) -> Result<Response, ApiError> {
+        execute_api(self.build(bearer_code)).await
+    }
+}
+
+<%= responses.join("") %>

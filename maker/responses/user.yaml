@@ -1,0 +1,31 @@
+---
+
+response:
+  type: object
+  properties:
+    open_id:
+      type: string
+    union_id:
+      type: string
+    avatar_url:
+      type: string
+    avatar_url_100:
+      type: string
+    avatar_large_url:
+      type: string
+    display_name:
+      type: string
+    bio_description:
+      type: string
+    profile_deep_link:
+      type: string
+    is_verified:
+      type: boolean
+    follower_count:
+      type: int64
+    following_count:
+      type: int64
+    likes_count:
+      type: int64
+    video_count:
+      type: int64
