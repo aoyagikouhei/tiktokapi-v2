@@ -18,6 +18,7 @@ const URL: &str = "<%= yml[:url] %>";
 impl Api {
 <%= api_new %>
 <%= setter %>
+    #[allow(clippy::vec_init_then_push)]
     pub fn build(self, bearer_code: &str) -> RequestBuilder {
 <%= parameters %>
         let client = reqwest::Client::new();

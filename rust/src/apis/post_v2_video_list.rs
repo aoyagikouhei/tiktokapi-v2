@@ -27,9 +27,10 @@ impl Api {
         Self { fields, body }
     }
 
+    #[allow(clippy::vec_init_then_push)]
     pub fn build(self, bearer_code: &str) -> RequestBuilder {
-        let mut query_parameters = vec![("fields", self.fields.iter().join(","))];
-        query_parameters.push();
+        let mut query_parameters = vec![];
+        query_parameters.push(("fields", self.fields.iter().join(",")));
         let client = reqwest::Client::new();
         client
             .post(URL)
