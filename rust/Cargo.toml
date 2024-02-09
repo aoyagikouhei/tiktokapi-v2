@@ -3,7 +3,15 @@ name = "tiktokapi-v2"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+authors = ["aoyagikouhei <aoyagi.kouhei@gmail.com>"]
+license = "MIT"
+description = "TikTok API v2 library."
+repository = "https://github.com/aoyagikouhei/tiktok-v2-rs"
+keywords = ["tiktok", "v2", "api", "client", "oauth"]
+categories = ["api-bindings"]
+readme = "README.md"
+documentation = "https://docs.rs/tiktok-v2"
 
 [dependencies]
 itertools = "0.12"
@@ -11,13 +19,11 @@ oauth2 = { version = "4.4", optional = true }
 reqwest = { version = "0.11", features = ["json"], default-features = false, optional = true }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tokio = { version = "1", features = ["time"], optional = true }
 thiserror = "1"
 
 [features]
 default = ["reqwest/default-tls"]
 rustls-tls = ["reqwest/rustls-tls"]
-retry = ["tokio"]
 oauth = ["oauth2"]
 
 [dev-dependencies]
