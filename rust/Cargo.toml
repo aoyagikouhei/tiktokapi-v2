@@ -1,17 +1,15 @@
 [package]
 name = "tiktokapi-v2"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
-
-
 authors = ["aoyagikouhei <aoyagi.kouhei@gmail.com>"]
 license = "MIT"
 description = "TikTok API v2 library."
-repository = "https://github.com/aoyagikouhei/tiktok-v2"
+repository = "https://github.com/aoyagikouhei/tiktokapi-v2"
 keywords = ["tiktok", "v2", "api", "client", "oauth"]
 categories = ["api-bindings"]
 readme = "README.md"
-documentation = "https://docs.rs/tiktok-v2"
+documentation = "https://docs.rs/tiktokapi-v2"
 
 [dependencies]
 itertools = "0.12"
