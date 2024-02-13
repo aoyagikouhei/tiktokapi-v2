@@ -112,8 +112,11 @@ impl TiktokOauth {
             .add_scopes(self.scopes.clone())
             .url();
 
+        let re = regex::Regex::new(r"&client_id=").unwrap();
+        let result = re.replace_all(auth_url, "&client_key=");
+
         OAuthUrlResult {
-            oauth_url: auth_url.to_string(),
+            oauth_url: result.to_string(),
             csrf_token: csrf_token.to_string(),
         }
     }
