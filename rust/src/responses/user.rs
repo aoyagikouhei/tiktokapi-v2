@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct User {
@@ -42,7 +43,7 @@ impl User {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, Hash, PartialEq)]
 pub enum UserField {
     OpenId,
     UnionId,
@@ -58,6 +59,27 @@ pub enum UserField {
     LikesCount,
     VideoCount,
 }
+
+impl UserField {
+    pub fn all() -> HashSet<Self> {
+        let mut set = HashSet::new();
+        set.insert(UserField::OpenId);
+        set.insert(UserField::UnionId);
+        set.insert(UserField::AvatarUrl);
+        set.insert(UserField::AvatarUrl100);
+        set.insert(UserField::AvatarLargeUrl);
+        set.insert(UserField::DisplayName);
+        set.insert(UserField::BioDescription);
+        set.insert(UserField::ProfileDeepLink);
+        set.insert(UserField::IsVerified);
+        set.insert(UserField::FollowerCount);
+        set.insert(UserField::FollowingCount);
+        set.insert(UserField::LikesCount);
+        set.insert(UserField::VideoCount);
+        set
+    }
+}
+
 impl std::fmt::Display for UserField {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {

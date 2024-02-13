@@ -64,7 +64,8 @@ end
 extra_value = extra_list.present? ? " &&\n        #{extra_list.join(" &&\n        ")}" : ""
 
 %><% if independence_flag %><% if refs.present?  %>use crate::responses::{<%= refs.map{|it| "#{it}::#{it.ucc}"}.join(", ") %>};
-<% end %>use serde::{Serialize, Deserialize};<% end %>
+<% end %>use std::collections::HashSet;
+use serde::{Serialize, Deserialize};<% end %>
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct <%= class_name %> {<% properties.each_pair do |key, value| %><% if !value[:required] %>
@@ -104,10 +105,19 @@ impl Default for <%= key.to_s.ucc %> {
 <% end %>
 
 <% if independence_flag %>
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, Hash, PartialEq)]
 pub enum <%= class_name %>Field {<% properties.each_pair do |key, value| %>
     <%= key.to_s.ucc %>,<% end %>
 }
+
+impl <%= class_name %>Field {
+    pub fn all() -> HashSet<Self> {
+        let mut set = HashSet::new();<% properties.each_pair do |key, value| %>
+        set.insert(<%= class_name %>Field::<%= key.to_s.ucc %>);<% end %>
+        set
+    }
+}
+
 impl std::fmt::Display for <%= class_name %>Field {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {<% properties.each_pair do |key, value| %>

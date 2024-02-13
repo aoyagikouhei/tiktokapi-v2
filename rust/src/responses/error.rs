@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Error {
@@ -63,12 +64,23 @@ impl Default for Code {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, Hash, PartialEq)]
 pub enum ErrorField {
     Code,
     Message,
     LogId,
 }
+
+impl ErrorField {
+    pub fn all() -> HashSet<Self> {
+        let mut set = HashSet::new();
+        set.insert(ErrorField::Code);
+        set.insert(ErrorField::Message);
+        set.insert(ErrorField::LogId);
+        set
+    }
+}
+
 impl std::fmt::Display for ErrorField {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {

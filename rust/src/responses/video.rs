@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Video {
@@ -46,7 +47,7 @@ impl Video {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, Hash, PartialEq)]
 pub enum VideoField {
     Id,
     CreateTime,
@@ -64,6 +65,29 @@ pub enum VideoField {
     ShareCount,
     ViewCount,
 }
+
+impl VideoField {
+    pub fn all() -> HashSet<Self> {
+        let mut set = HashSet::new();
+        set.insert(VideoField::Id);
+        set.insert(VideoField::CreateTime);
+        set.insert(VideoField::CoverImageUrl);
+        set.insert(VideoField::ShareUrl);
+        set.insert(VideoField::VideoDescription);
+        set.insert(VideoField::Duration);
+        set.insert(VideoField::Height);
+        set.insert(VideoField::Width);
+        set.insert(VideoField::Title);
+        set.insert(VideoField::EmbedHtml);
+        set.insert(VideoField::EmbedLink);
+        set.insert(VideoField::LikeCount);
+        set.insert(VideoField::CommentCoun);
+        set.insert(VideoField::ShareCount);
+        set.insert(VideoField::ViewCount);
+        set
+    }
+}
+
 impl std::fmt::Display for VideoField {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
