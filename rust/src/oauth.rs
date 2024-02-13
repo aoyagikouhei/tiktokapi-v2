@@ -62,7 +62,7 @@ pub enum OAuthError {
 #[derive(Debug, Clone)]
 pub struct OAuthUrlResult {
     pub oauth_url: String,
-    pub pkce_verifier: String,
+    pub csrf_token: String,
 }
 
 #[derive(Debug, Clone)]
@@ -104,35 +104,26 @@ impl TiktokOauth {
     }
 
     pub fn oauth_url(&self) -> OAuthUrlResult {
-        let (pkce_challenge, pkce_verifier) = oauth2::PkceCodeChallenge::new_random_sha256();
-        let (auth_url, _csrf_token) = self
+        let (auth_url, csrf_token) = self
             .basic_client
             .clone()
             .set_redirect_uri(self.redirect_url.clone())
             .authorize_url(CsrfToken::new_random)
             .add_scopes(self.scopes.clone())
-            .set_pkce_challenge(pkce_challenge)
             .url();
 
         OAuthUrlResult {
             oauth_url: auth_url.to_string(),
-            pkce_verifier: pkce_verifier.secret().to_string(),
+            csrf_token: csrf_token.to_string(),
         }
     }
 
-    pub async fn token(
-        &self,
-        pkce_verifier_str: &str,
-        code: &str,
-    ) -> Result<TokenResult, OAuthError> {
-        let pkce_verifier = oauth2::PkceCodeVerifier::new(pkce_verifier_str.to_owned());
-
+    pub async fn token(&self, code: &str) -> Result<TokenResult, OAuthError> {
         let token = self
             .basic_client
             .clone()
             .set_redirect_uri(self.redirect_url.clone())
             .exchange_code(AuthorizationCode::new(code.to_owned()))
-            .set_pkce_verifier(pkce_verifier)
             .request_async(async_http_client)
             .await
             .map_err(|e| OAuthError::Token(format!("{:?}", e)))?;
