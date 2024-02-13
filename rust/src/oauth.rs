@@ -114,10 +114,12 @@ impl TiktokOauth {
 
         let re = regex::Regex::new(r"&client_id=").unwrap();
         let oauth_url = auth_url.to_string();
-        let result = re.replace_all(&oauth_url, "&client_key=");
+        let oauth_url = re.replace_all(&oauth_url, "&client_key=").to_string();
+        let re = regex::Regex::new(r"\+").unwrap();
+        let oauth_url = re.replace_all(&oauth_url, ",").to_string();
 
         OAuthUrlResult {
-            oauth_url: result.to_string(),
+            oauth_url,
             csrf_token: csrf_token.secret().to_string(),
         }
     }
