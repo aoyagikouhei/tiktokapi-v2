@@ -1,6 +1,4 @@
 pub mod apis;
 pub mod error;
-pub mod responses;
-
-#[cfg(feature = "oauth")]
 pub mod oauth;
+pub mod responses;

@@ -8,9 +8,6 @@
 		}
 	],
 	"settings": {
-		"rust-analyzer.cargo.features": [
-			"oauth",
-		],
 		"rust-analyzer.linkedProjects": [
 			"./rust/Cargo.toml",
 		],

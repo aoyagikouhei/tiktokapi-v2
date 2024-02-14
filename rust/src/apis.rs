@@ -17,17 +17,17 @@ where
     } else {
         let text = match response.text().await {
             Ok(text) => text,
-            Err(err) => return Err(Error::Other(format!("{:?}", err), Some(status_code))),
+            Err(err) => return Err(Error::Other(format!("{:?}", err), status_code)),
         };
 
         let json = match serde_json::from_str::<serde_json::Value>(&text) {
             Ok(json) => json,
-            Err(_err) => return Err(Error::Other(text, Some(status_code))),
+            Err(_err) => return Err(Error::Other(text, status_code)),
         };
 
         match serde_json::from_value::<crate::responses::error::Error>(json["error"].clone()) {
-            Ok(err) => Err(Error::Api(err)),
-            Err(_) => Err(Error::Other(text, Some(status_code))),
+            Ok(err) => Err(Error::Api(err, status_code)),
+            Err(_) => Err(Error::Other(text, status_code)),
         }
     }
 }
