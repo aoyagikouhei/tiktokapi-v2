@@ -1,6 +1,6 @@
 [package]
 name = "tiktokapi-v2"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2021"
 authors = ["aoyagikouhei <aoyagi.kouhei@gmail.com>"]
 license = "MIT"

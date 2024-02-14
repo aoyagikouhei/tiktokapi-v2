@@ -1,3 +1,4 @@
+pub mod get_v2_user_info;
 pub mod post_v2_video_list;
 pub mod post_v2_video_query;
 

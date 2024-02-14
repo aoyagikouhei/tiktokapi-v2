@@ -1,0 +1,21 @@
+---
+
+url: https://open.tiktokapis.com/v2/user/info/
+method: get
+queries:
+  - name: fields
+    required: true
+    type: enum
+    value: user
+response:
+  type: object
+  properties:
+    data:
+      type: object
+      properties:
+        user:
+          type: object
+          ref: user
+    error:
+      type: object
+      ref: error
