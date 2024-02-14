@@ -27,7 +27,7 @@ response:
       type: string
     like_count:
       type: int32
-    comment_coun:
+    comment_count:
       type: int32
     share_count:
       type: int32

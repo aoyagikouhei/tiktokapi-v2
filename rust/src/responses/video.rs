@@ -28,7 +28,7 @@ pub struct Video {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub like_count: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub comment_coun: Option<i32>,
+    pub comment_count: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub share_count: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -61,7 +61,7 @@ pub enum VideoField {
     EmbedHtml,
     EmbedLink,
     LikeCount,
-    CommentCoun,
+    CommentCount,
     ShareCount,
     ViewCount,
 }
@@ -81,7 +81,7 @@ impl VideoField {
         set.insert(VideoField::EmbedHtml);
         set.insert(VideoField::EmbedLink);
         set.insert(VideoField::LikeCount);
-        set.insert(VideoField::CommentCoun);
+        set.insert(VideoField::CommentCount);
         set.insert(VideoField::ShareCount);
         set.insert(VideoField::ViewCount);
         set
@@ -103,7 +103,7 @@ impl std::fmt::Display for VideoField {
             Self::EmbedHtml => write!(f, "embed_html"),
             Self::EmbedLink => write!(f, "embed_link"),
             Self::LikeCount => write!(f, "like_count"),
-            Self::CommentCoun => write!(f, "comment_coun"),
+            Self::CommentCount => write!(f, "comment_count"),
             Self::ShareCount => write!(f, "share_count"),
             Self::ViewCount => write!(f, "view_count"),
         }
