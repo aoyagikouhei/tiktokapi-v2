@@ -9,6 +9,7 @@ use std::collections::HashMap;
 
 const AUTH_URL: &str = "https://www.tiktok.com/v2/auth/authorize/";
 const TOKEN_URL: &str = "https://open.tiktokapis.com/v2/oauth/token/";
+const REVOKE_URL: &str = "https://open.tiktokapis.com/v2/oauth/revoke/";
 
 pub enum TiktokScope {
     ResearchAdlibBasic,
@@ -111,21 +112,57 @@ impl TiktokOauth {
         form.insert("grant_type", "authorization_code");
         form.insert("code", code);
         form.insert("redirect_uri", self.callback_url.as_str());
-        let response = reqwest::Client::new()
-            .post(TOKEN_URL)
-            .header(CACHE_CONTROL, "no-cache")
-            .form(&form)
-            .send()
-            .await?;
+        execute_token(form).await
+    }
+
+    pub async fn refresh(&self, refresh_token: &str) -> Result<TokenResult, Error> {
+        let mut form = HashMap::new();
+        form.insert("client_key", self.client_key.as_str());
+        form.insert("client_secret", self.client_secret.as_str());
+        form.insert("grant_type", "refresh_token");
+        form.insert("refresh_token", refresh_token);
+        execute_token(form).await
+    }
+
+    pub async fn revoke(&self, access_token: &str) -> Result<(), Error> {
+        let mut form = HashMap::new();
+        form.insert("client_key", self.client_key.as_str());
+        form.insert("client_secret", self.client_secret.as_str());
+        form.insert("token", access_token);
+        let response = execute_send(REVOKE_URL, &form).await?;
         let status_code = response.status();
-        let json = response.json().await?;
         if status_code.is_success() {
-            let token_result: TokenResult = serde_json::from_value(json)?;
-            Ok(token_result)
+            Ok(())
         } else {
+            let json = response.json().await?;
             let token_error: OAuthError = serde_json::from_value(json)?;
             Err(Error::OAuth(token_error, status_code))
         }
+    }
+}
+
+async fn execute_send(
+    url: &str,
+    form: &HashMap<&str, &str>,
+) -> Result<reqwest::Response, reqwest::Error> {
+    reqwest::Client::new()
+        .post(url)
+        .header(CACHE_CONTROL, "no-cache")
+        .form(form)
+        .send()
+        .await
+}
+
+async fn execute_token(form: HashMap<&str, &str>) -> Result<TokenResult, Error> {
+    let response = execute_send(TOKEN_URL, &form).await?;
+    let status_code = response.status();
+    let json = response.json().await?;
+    if status_code.is_success() {
+        let token_result: TokenResult = serde_json::from_value(json)?;
+        Ok(token_result)
+    } else {
+        let token_error: OAuthError = serde_json::from_value(json)?;
+        Err(Error::OAuth(token_error, status_code))
     }
 }
 
