@@ -5,11 +5,15 @@
 		},
 		{
 			"path": "rust"
+		},
+		{
+			"path": "./rust/examples/oauth-web"
 		}
 	],
 	"settings": {
 		"rust-analyzer.linkedProjects": [
 			"./rust/Cargo.toml",
+			"./rust/examples/oauth-web/Cargo.toml",
 		],
 		"rust-analyzer.showUnlinkedFileNotification": false
 	}

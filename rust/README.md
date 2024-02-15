@@ -22,9 +22,7 @@ TikTok API v2 library.
 - reqwest/rustls-tls
 
 ## Changes
-
-### v0.1.9 (2024/02/15)
-* add refresh and revoke token
+[CHANGELOG.md](https://github.com/aoyagikouhei/tiktokapi-v2/blob/main/CHANGELOG.md)
 
 ## Examples
 
