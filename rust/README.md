@@ -23,7 +23,7 @@ TikTok API v2 library.
 - reqwest/rustls-tls
 
 ## Changes
-[CHANGELOG.md](https://github.com/aoyagikouhei/tiktokapi-v2/blob/main/CHANGELOG.md)
+[CHANGELOG.md](https://github.com/aoyagikouhei/tiktokapi-v2/blob/main/rust/CHANGELOG.md)
 
 ## Examples
 
