@@ -8,6 +8,7 @@ TikTok API v2 library.
 - Convenience setted parameter methods
 - OAuth2
 - type support
+- OAuth web example
 
 ## Supported APIs
 - get_v2_user_info
