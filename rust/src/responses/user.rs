@@ -22,6 +22,8 @@ pub struct User {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_verified: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub username: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub follower_count: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub following_count: Option<i64>,
@@ -54,6 +56,7 @@ pub enum UserField {
     BioDescription,
     ProfileDeepLink,
     IsVerified,
+    Username,
     FollowerCount,
     FollowingCount,
     LikesCount,
@@ -72,6 +75,7 @@ impl UserField {
         set.insert(UserField::BioDescription);
         set.insert(UserField::ProfileDeepLink);
         set.insert(UserField::IsVerified);
+        set.insert(UserField::Username);
         set.insert(UserField::FollowerCount);
         set.insert(UserField::FollowingCount);
         set.insert(UserField::LikesCount);
@@ -92,6 +96,7 @@ impl std::fmt::Display for UserField {
             Self::BioDescription => write!(f, "bio_description"),
             Self::ProfileDeepLink => write!(f, "profile_deep_link"),
             Self::IsVerified => write!(f, "is_verified"),
+            Self::Username => write!(f, "username"),
             Self::FollowerCount => write!(f, "follower_count"),
             Self::FollowingCount => write!(f, "following_count"),
             Self::LikesCount => write!(f, "likes_count"),

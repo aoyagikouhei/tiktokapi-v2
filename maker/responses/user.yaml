@@ -21,6 +21,8 @@ response:
       type: string
     is_verified:
       type: boolean
+    username:
+      type: string
     follower_count:
       type: int64
     following_count:
