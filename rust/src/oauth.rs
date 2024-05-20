@@ -91,8 +91,8 @@ impl TiktokOauth {
         })
     }
 
-    pub fn oauth_url(&self) -> OAuthUrlResult {
-        let csrf_token = csrf_token();
+    pub fn oauth_url(&self, state: Option<String>) -> OAuthUrlResult {
+        let csrf_token = state.unwrap_or(csrf_token());
         let scope = self.scopes.iter().map(|it| it.to_string()).join(",");
         let redirect_uri = utf8_percent_encode(&self.callback_url, NON_ALPHANUMERIC);
         let oauth_url = format!(

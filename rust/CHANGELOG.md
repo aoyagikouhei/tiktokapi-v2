@@ -1,11 +1,14 @@
 # Changes
 
+## v0.3.0 (2024/05/20)
+* Modify oauth_url parameters
+
 ## v0.2.0 (2024/05/13)
-* update reqwest 0.12
-* modify user info
+* Update reqwest 0.12
+* Modify user info
 
 ## v0.1.10 (2024/02/15)
-* add oauth example
+* Add oauth example
 
 ## v0.1.9 (2024/02/15)
-* add refresh and revoke token
+* Add refresh and revoke token

@@ -43,7 +43,7 @@ fn oauth_client() -> TiktokOauth {
 
 async fn root(cookies: Cookies) -> impl IntoResponse {
     let oauth = oauth_client();
-    let res = oauth.oauth_url();
+    let res = oauth.oauth_url(None);
     cookies.add(Cookie::new(CSRF_TOKEN, res.csrf_token.clone()));
     Html(format!("<a href='{}'>oauth<a>", res.oauth_url)).into_response()
 }
