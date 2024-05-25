@@ -1,32 +1,36 @@
 use crate::responses::user::UserField;
 use crate::responses::{error::Error, user::User};
-use crate::{apis::execute_api, error::Error as ApiError};
+use crate::{
+    apis::{apply_options, execute_api, make_url, ApiOptions},
+    error::Error as ApiError,
+};
 use itertools::Itertools;
 use reqwest::RequestBuilder;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
-const URL: &str = "https://open.tiktokapis.com/v2/user/info/";
+const URL: &str = "/user/info/";
 
 #[derive(Debug, Clone, Default)]
 pub struct Api {
+    options: Option<ApiOptions>,
     fields: HashSet<UserField>,
 }
 
 impl Api {
-    pub fn new(fields: HashSet<UserField>) -> Self {
-        Self { fields }
+    pub fn new(fields: HashSet<UserField>, options: Option<ApiOptions>) -> Self {
+        Self { options, fields }
     }
 
     #[allow(clippy::vec_init_then_push)]
     pub fn build(self, bearer_code: &str) -> RequestBuilder {
         let mut query_parameters = vec![];
         query_parameters.push(("fields", self.fields.iter().join(",")));
-        let client = reqwest::Client::new();
-        client
-            .get(URL)
+        let client = reqwest::Client::new()
+            .get(make_url(URL, &self.options))
             .query(&query_parameters)
-            .bearer_auth(bearer_code)
+            .bearer_auth(bearer_code);
+        apply_options(client, &self.options)
     }
 
     pub async fn execute(self, bearer_code: &str) -> Result<Response, ApiError> {

@@ -3,6 +3,7 @@
 ## v0.4.0 (2024/05/25)
 * Add timeout options and oauth
 * Modify TiktokOauth new 
+* Add api mock
 
 ## v0.3.0 (2024/05/20)
 * Modify oauth_url parameters

@@ -1,6 +1,6 @@
 ---
 
-url: https://open.tiktokapis.com/v2/video/query/
+url: /video/query/
 method: post
 queries:
   - name: fields

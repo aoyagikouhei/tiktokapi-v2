@@ -57,7 +57,7 @@ async fn oauth(uri: Uri, cookies: Cookies) -> impl IntoResponse {
     let oauth = oauth_client();
     let res = oauth.token(hash_query.get("code").unwrap()).await.unwrap();
     println!("{:?}", res);
-    let me = get_v2_user_info::Api::new(UserField::all())
+    let me = get_v2_user_info::Api::new(UserField::all(), None)
         .execute(&res.access_token)
         .await
         .unwrap();

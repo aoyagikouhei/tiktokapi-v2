@@ -1,6 +1,6 @@
 ---
 
-url: https://open.tiktokapis.com/v2/user/info/
+url: /user/info/
 method: get
 queries:
   - name: fields

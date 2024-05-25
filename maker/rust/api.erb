@@ -5,7 +5,7 @@ use std::collections::HashSet;
 <% end %>use reqwest::RequestBuilder;
 use serde::{Serialize, Deserialize};
 use crate::{
-    apis::execute_api,
+    apis::{apply_options, make_url, execute_api, ApiOptions},
     error::Error as ApiError,
 };
 
@@ -21,12 +21,12 @@ impl Api {
     #[allow(clippy::vec_init_then_push)]
     pub fn build(self, bearer_code: &str) -> RequestBuilder {
 <%= parameters %>
-        let client = reqwest::Client::new();
-        client
-            .<%= yml[:method] %>(URL)<% if queries.present? %>
+        let client = reqwest::Client::new()
+            .<%= yml[:method] %>(make_url(URL, &self.options))<% if queries.present? %>
             .query(&query_parameters)<% end %><% if bodies.present? %>
             .json(&self.body)<% end %>
-            .bearer_auth(bearer_code)
+            .bearer_auth(bearer_code);
+        apply_options(client, &self.options)
     }
 
     pub async fn execute(self, bearer_code: &str) -> Result<Response, ApiError> {
