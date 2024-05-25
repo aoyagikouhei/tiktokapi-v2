@@ -38,7 +38,6 @@ fn oauth_client() -> TiktokOauth {
             TiktokScope::VideoList,
         ],
     )
-    .unwrap()
 }
 
 async fn root(cookies: Cookies) -> impl IntoResponse {

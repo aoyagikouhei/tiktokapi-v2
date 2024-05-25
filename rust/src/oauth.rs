@@ -5,7 +5,7 @@ use percent_encoding::{utf8_percent_encode, NON_ALPHANUMERIC};
 use rand::Rng;
 use reqwest::header::CACHE_CONTROL;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::{collections::HashMap, time::Duration};
 
 const AUTH_URL: &str = "https://www.tiktok.com/v2/auth/authorize/";
 const TOKEN_URL: &str = "https://open.tiktokapis.com/v2/oauth/token/";
@@ -58,6 +58,11 @@ pub struct OAuthUrlResult {
     pub csrf_token: String,
 }
 
+#[derive(Debug, Clone, Default)]
+pub struct TiktokOauthOptions {
+    pub timeout: Option<Duration>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TokenResult {
     pub open_id: String,
@@ -74,6 +79,7 @@ pub struct TiktokOauth {
     client_key: String,
     client_secret: String,
     callback_url: String,
+    options: Option<TiktokOauthOptions>,
 }
 
 impl TiktokOauth {
@@ -82,13 +88,24 @@ impl TiktokOauth {
         client_secret: &str,
         callback_url: &str,
         scopes: Vec<TiktokScope>,
-    ) -> Result<Self, Error> {
-        Ok(Self {
+    ) -> Self {
+        Self::new_with_options(client_key, client_secret, callback_url, scopes, None)
+    }
+
+    pub fn new_with_options(
+        client_key: &str,
+        client_secret: &str,
+        callback_url: &str,
+        scopes: Vec<TiktokScope>,
+        options: Option<TiktokOauthOptions>,
+    ) -> Self {
+        Self {
             callback_url: callback_url.to_owned(),
             scopes,
             client_key: client_key.to_owned(),
             client_secret: client_secret.to_owned(),
-        })
+            options,
+        }
     }
 
     pub fn oauth_url(&self, state: Option<String>) -> OAuthUrlResult {
@@ -112,7 +129,7 @@ impl TiktokOauth {
         form.insert("grant_type", "authorization_code");
         form.insert("code", code);
         form.insert("redirect_uri", self.callback_url.as_str());
-        execute_token(form).await
+        execute_token(form, &self.options).await
     }
 
     pub async fn refresh(&self, refresh_token: &str) -> Result<TokenResult, Error> {
@@ -121,7 +138,7 @@ impl TiktokOauth {
         form.insert("client_secret", self.client_secret.as_str());
         form.insert("grant_type", "refresh_token");
         form.insert("refresh_token", refresh_token);
-        execute_token(form).await
+        execute_token(form, &self.options).await
     }
 
     pub async fn revoke(&self, access_token: &str) -> Result<(), Error> {
@@ -129,7 +146,7 @@ impl TiktokOauth {
         form.insert("client_key", self.client_key.as_str());
         form.insert("client_secret", self.client_secret.as_str());
         form.insert("token", access_token);
-        let response = execute_send(REVOKE_URL, &form).await?;
+        let response = execute_send(REVOKE_URL, &form, &self.options).await?;
         let status_code = response.status();
         if status_code.is_success() {
             Ok(())
@@ -144,17 +161,29 @@ impl TiktokOauth {
 async fn execute_send(
     url: &str,
     form: &HashMap<&str, &str>,
+    options: &Option<TiktokOauthOptions>,
 ) -> Result<reqwest::Response, reqwest::Error> {
-    reqwest::Client::new()
+    let builder = reqwest::Client::new()
         .post(url)
         .header(CACHE_CONTROL, "no-cache")
-        .form(form)
-        .send()
-        .await
+        .form(form);
+    let builder = if let Some(options) = options {
+        if let Some(timeout) = options.timeout {
+            builder.timeout(timeout)
+        } else {
+            builder
+        }
+    } else {
+        builder
+    };
+    builder.send().await
 }
 
-async fn execute_token(form: HashMap<&str, &str>) -> Result<TokenResult, Error> {
-    let response = execute_send(TOKEN_URL, &form).await?;
+async fn execute_token(
+    form: HashMap<&str, &str>,
+    options: &Option<TiktokOauthOptions>,
+) -> Result<TokenResult, Error> {
+    let response = execute_send(TOKEN_URL, &form, options).await?;
     let status_code = response.status();
     let json = response.json().await?;
     if status_code.is_success() {
