@@ -52,7 +52,7 @@ end
 
 new_array = required_queries.map{|it| "#{it[:name].make_name.make_field}: #{make_new_type(it)}"}
 new_array << "body: Body" if bodies.present?
-new_array << "options: Option<ApiOptions>"
+new_array << "options: Option<TiktokOptions>"
 %>pub fn new(<%= new_array.join(", ") %>) -> Self {
     Self {
       options,<% required_queries.each do |it| %>

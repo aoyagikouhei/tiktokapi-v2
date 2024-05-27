@@ -1,8 +1,9 @@
 use crate::responses::video::VideoField;
 use crate::responses::{error::Error, video::Video};
 use crate::{
-    apis::{apply_options, execute_api, make_url, ApiOptions},
+    apis::execute_api,
     error::Error as ApiError,
+    options::{apply_options, make_url, TiktokOptions},
 };
 use itertools::Itertools;
 use reqwest::RequestBuilder;
@@ -25,13 +26,13 @@ pub struct Body {
 
 #[derive(Debug, Clone, Default)]
 pub struct Api {
-    options: Option<ApiOptions>,
+    options: Option<TiktokOptions>,
     fields: HashSet<VideoField>,
     body: Body,
 }
 
 impl Api {
-    pub fn new(fields: HashSet<VideoField>, body: Body, options: Option<ApiOptions>) -> Self {
+    pub fn new(fields: HashSet<VideoField>, body: Body, options: Option<TiktokOptions>) -> Self {
         Self {
             options,
             fields,

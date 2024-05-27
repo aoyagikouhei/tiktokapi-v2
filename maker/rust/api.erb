@@ -5,8 +5,9 @@ use std::collections::HashSet;
 <% end %>use reqwest::RequestBuilder;
 use serde::{Serialize, Deserialize};
 use crate::{
-    apis::{apply_options, make_url, execute_api, ApiOptions},
+    apis::execute_api,
     error::Error as ApiError,
+    options::{apply_options, make_url, TiktokOptions}
 };
 
 const URL: &str = "<%= yml[:url] %>";
