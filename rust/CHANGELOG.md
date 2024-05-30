@@ -1,5 +1,8 @@
 # Changes
 
+## v0.5.1 (2024/05/30)
+* Modify OAuth URL bug
+
 ## v0.5.0 (2024/05/27)
 * Merge oauth and api Options
 

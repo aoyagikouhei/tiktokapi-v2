@@ -11,8 +11,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 const AUTH_URL: &str = "https://www.tiktok.com/v2/auth/authorize/";
-const TOKEN_URL: &str = "https://open.tiktokapis.com/v2/oauth/token/";
-const REVOKE_URL: &str = "https://open.tiktokapis.com/v2/oauth/revoke/";
+const TOKEN_URL: &str = "/oauth/token/";
+const REVOKE_URL: &str = "/oauth/revoke/";
 
 pub enum TiktokScope {
     ResearchAdlibBasic,
